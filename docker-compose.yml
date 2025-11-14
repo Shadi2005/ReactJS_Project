@@ -1,1 +1,7 @@
-# ADD DOCKER-COMPOSE CONTENTS HERE
+services:
+  frontend:
+    build: .
+    container_name: react-frontend
+    ports:
+      - "80:80"
+    restart: unless-stopped
