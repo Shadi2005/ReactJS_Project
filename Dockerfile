@@ -1,17 +1,18 @@
 FROM node:18.17.1-alpine AS builder
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm install
+
 COPY . .
-RUN npm run build
+RUN npm run build 
 
-FROM node:18.17.1-alpine
-WORKDIR /app
+FROM nginx:alpine
+RUN rm -rf /usr/share/nginx/html/*
 
-RUN npm install -g serve
+COPY --from=builder /app/build /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=builder /app/build ./build
-
-EXPOSE 3000
-CMD ["serve", "-s", "build", "-l", "3000"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
 
